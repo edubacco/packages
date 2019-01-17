@@ -34,6 +34,7 @@ class CloneProjectJob extends ContainerAwareJob
 
         $builder = new ProcessBuilder(['clone', $package->getSshUrl(), $directory]);
         $builder->setPrefix('git');
+        $builder->setTimeout(null);
 
         $process = $builder->getProcess();
         $process->run(function ($type, $message) {
