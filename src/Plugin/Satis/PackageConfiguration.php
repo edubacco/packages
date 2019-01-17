@@ -28,7 +28,7 @@ class PackageConfiguration
     /**
      * @ORM\Column(name="enabled", type="boolean")
      */
-    private $enabled = false;
+    private $enabled = true;
 
     /**
      * @ORM\ManyToOne(targetEntity="Terramar\Packages\Entity\Package")
