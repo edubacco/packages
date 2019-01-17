@@ -29,7 +29,7 @@ RUN apt-get update \
 COPY . /app
 COPY ./docker/nginx/vhost.common.d/vhost.common.conf /opt/docker/etc/nginx/vhost.common.d/10-location-root.conf
 RUN chown -R 1000:1000 /app
-RUN composer install
+RUN composer install -o
 
 ENTRYPOINT envsubst < config.yml.tmpl > config.yml \
             && bin/console resque:worker:start \
