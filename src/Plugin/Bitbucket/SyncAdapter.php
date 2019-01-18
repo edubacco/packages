@@ -279,4 +279,102 @@ class SyncAdapter implements SyncAdapterInterface
             return false;
         }
     }
+
+    public function enableAllDeploymentKeys(Package $package)
+    {
+		$deploymentKeys = SshKeysHelper::getKeys();
+
+	    foreach ($deploymentKeys as $deploymentKey) {
+	    	if (!$this->hasDeploymentKey($package, $deploymentKey)) {
+	    		$this->addDeploymentKey($package, $deploymentKey);
+		    }
+	    }
+    }
+
+    public function disableAllDeploymentKeys(Package $package)
+    {
+	    $deploymentKeys = SshKeysHelper::getKeys();
+
+	    foreach ($deploymentKeys as $deploymentKey) {
+	    	if ($this->hasDeploymentKey($package, $deploymentKey)) {
+	    		$this->removeDeploymentKey($package, $deploymentKey);
+		    }
+	    }
+    }
+
+	/**
+	 * @param Package   $package
+	 * @param array     $key
+	 */
+    private function addDeploymentKey(Package $package, array $key)
+    {
+    	$auth = $this->getAuth($package->getRemote());
+    	$deployKeys = new Repositories\Deploykeys();
+    	$deployKeys->setCredentials($auth);
+
+	    $resp = $deployKeys->create(
+		    $package->getRemote()->getAccount(),
+		    $package->getFqn(),
+		    $key['public_key'],
+		    $key['label']
+	    );
+    }
+
+	/**
+	 * @param Package $package
+	 * @param array $key
+	 *
+	 * @return false|string
+	 */
+    private function hasDeploymentKey(Package $package, array $key)
+    {
+	    $keyFull = $key['public_key'];
+
+	    $auth = $this->getAuth($package->getRemote());
+	    $deployKeys = new Repositories\Deploykeys();
+	    $deployKeys->setCredentials($auth);
+
+	    //elimino la parte relativa ad utenza@macchina
+	    $keyContentArr = explode( ' ', $keyFull );
+	    if ( 3 === count( $keyContentArr ) ) {
+		    array_pop( $keyContentArr );
+	    }
+	    $keyShort = implode( ' ', $keyContentArr );
+
+	    $existingKeys = $deployKeys->all(
+	    	$package->getRemote()->getAccount(),
+		    $package->getFqn()
+	    );
+
+	    if ( ! $existingKeys->isSuccessful() ) {
+		    throw new BitbucketKeysException( "{$existingKeys->getStatusCode()}: {$existingKeys->getReasonPhrase()}" );
+	    }
+
+	    $deploymentKeys = json_decode( $existingKeys->getContent() );
+
+	    foreach ( $deploymentKeys as $deploymentKey ) {
+		    if ( $deploymentKey->key === $keyFull || $deploymentKey->key === $keyShort ) {
+			    return $key->pk;
+		    }
+	    }
+
+	    return false;
+    }
+
+	/**
+	 * @param Package   $package
+	 * @param string    $keyId      as provided from Bitbucket api
+	 */
+    private function removeDeploymentKey(Package $package, $keyId)
+    {
+	    $auth = $this->getAuth($package->getRemote());
+	    $deployKeys = new Repositories\Deploykeys();
+	    $deployKeys->setCredentials($auth);
+
+	    $resp = $deployKeys->delete(
+		    $package->getRemote()->getAccount(),
+		    $package->getFqn(),
+		    $keyId
+	    );
+    }
 }

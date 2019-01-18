@@ -77,7 +77,8 @@ class PackageSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->adapter->enableHook($package);
+		$this->adapter->enableHook( $package );
+		$this->adapter->enableAllDeploymentKeys($package);
     }
 
     /**
@@ -91,5 +92,6 @@ class PackageSubscriber implements EventSubscriberInterface
         }
 
         $this->adapter->disableHook($package);
+        $this->adapter->disableAllDeploymentKeys($package);
     }
 }

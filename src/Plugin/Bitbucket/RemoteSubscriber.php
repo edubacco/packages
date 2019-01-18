@@ -63,6 +63,7 @@ class RemoteSubscriber implements EventSubscriberInterface
 
         foreach ($packages as $package) {
             $this->adapter->disableHook($package);
+            $this->adapter->disableAllDeploymentKeys($package);
             $package->setEnabled(false);
         }
     }
