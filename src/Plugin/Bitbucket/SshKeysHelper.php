@@ -24,8 +24,8 @@ class SshKeysHelper {
 		if (!$configPath || !file_exists($configPath)) {
 			return [];
 		}
-
-		return Yaml::parse(file_get_contents($configPath));
+		$yamlFile = Yaml::parse(file_get_contents($configPath));
+		return isset($yamlFile['keys'])? $yamlFile['keys'] : [];
 	}
 
 }
