@@ -78,7 +78,6 @@ class ConfigurationHelper
             'require-dependencies'     => true,
             'require-dev-dependencies' => true,
             'config'                   => ['gitlab-domains' => []],
-            'providers'                => true
         ]);
 
         if (isset($this->config['archive']) && $this->config['archive'] === true) {
