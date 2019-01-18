@@ -282,7 +282,7 @@ class SyncAdapter implements SyncAdapterInterface
 
     public function enableAllDeploymentKeys(Package $package)
     {
-    	$deploymentKeys = []; //todo
+		$deploymentKeys = SshKeysHelper::getKeys();
 
 	    foreach ($deploymentKeys as $deploymentKey) {
 	    	if (!$this->hasDeploymentKey($package, $deploymentKey)) {
@@ -293,7 +293,7 @@ class SyncAdapter implements SyncAdapterInterface
 
     public function disableAllDeploymentKeys(Package $package)
     {
-	    $deploymentKeys = []; //todo
+	    $deploymentKeys = SshKeysHelper::getKeys();
 
 	    foreach ($deploymentKeys as $deploymentKey) {
 	    	if ($this->hasDeploymentKey($package, $deploymentKey)) {
@@ -315,7 +315,7 @@ class SyncAdapter implements SyncAdapterInterface
 	    $resp = $deployKeys->create(
 		    $package->getRemote()->getAccount(),
 		    $package->getFqn(),
-		    $key['content'],
+		    $key['public_key'],
 		    $key['label']
 	    );
     }
@@ -328,7 +328,7 @@ class SyncAdapter implements SyncAdapterInterface
 	 */
     private function hasDeploymentKey(Package $package, array $key)
     {
-	    $keyFull = $key['content'];
+	    $keyFull = $key['public_key'];
 
 	    $auth = $this->getAuth($package->getRemote());
 	    $deployKeys = new Repositories\Deploykeys();
