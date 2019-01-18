@@ -282,6 +282,11 @@ class SyncAdapter implements SyncAdapterInterface
 
     public function enableAllDeploymentKeys(Package $package)
     {
+	    $config = $this->getConfig($package);
+	    if (!$config->isEnabled()) {
+		    return true;
+	    }
+
 		$deploymentKeys = SshKeysHelper::getKeys();
 
 	    foreach ($deploymentKeys as $deploymentKey) {
@@ -312,9 +317,15 @@ class SyncAdapter implements SyncAdapterInterface
     	$deployKeys = new Repositories\Deploykeys();
     	$deployKeys->setCredentials($auth);
 
+	    $config = $this->getConfig($package);
+	    $fqn = $config->getPackage()->getFqn();
+	    $fqnArr = explode('/', $fqn);
+	    $account = array_shift($fqnArr);
+	    $repoName = implode('/', $fqnArr);
+
 	    $resp = $deployKeys->create(
-		    $package->getRemote()->getAccount(),
-		    $package->getFqn(),
+		    $account,
+		    $repoName,
 		    $key['public_key'],
 		    $key['label']
 	    );
@@ -334,6 +345,12 @@ class SyncAdapter implements SyncAdapterInterface
 	    $deployKeys = new Repositories\Deploykeys();
 	    $deployKeys->setCredentials($auth);
 
+	    $config = $this->getConfig($package);
+	    $fqn = $config->getPackage()->getFqn();
+	    $fqnArr = explode('/', $fqn);
+	    $account = array_shift($fqnArr);
+	    $repoName = implode('/', $fqnArr);
+
 	    //elimino la parte relativa ad utenza@macchina
 	    $keyContentArr = explode( ' ', $keyFull );
 	    if ( 3 === count( $keyContentArr ) ) {
@@ -342,13 +359,9 @@ class SyncAdapter implements SyncAdapterInterface
 	    $keyShort = implode( ' ', $keyContentArr );
 
 	    $existingKeys = $deployKeys->all(
-	    	$package->getRemote()->getAccount(),
-		    $package->getFqn()
+		    $account,
+		    $repoName
 	    );
-
-	    if ( ! $existingKeys->isSuccessful() ) {
-		    throw new BitbucketKeysException( "{$existingKeys->getStatusCode()}: {$existingKeys->getReasonPhrase()}" );
-	    }
 
 	    $deploymentKeys = json_decode( $existingKeys->getContent() );
 
@@ -371,9 +384,15 @@ class SyncAdapter implements SyncAdapterInterface
 	    $deployKeys = new Repositories\Deploykeys();
 	    $deployKeys->setCredentials($auth);
 
+	    $config = $this->getConfig($package);
+	    $fqn = $config->getPackage()->getFqn();
+	    $fqnArr = explode('/', $fqn);
+	    $account = array_shift($fqnArr);
+	    $repoName = implode('/', $fqnArr);
+
 	    $resp = $deployKeys->delete(
-		    $package->getRemote()->getAccount(),
-		    $package->getFqn(),
+		    $account,
+		    $repoName,
 		    $keyId
 	    );
     }
