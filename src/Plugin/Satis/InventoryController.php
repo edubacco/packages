@@ -12,13 +12,21 @@ namespace Terramar\Packages\Plugin\Satis;
 use Composer\Config;
 use Composer\IO\ConsoleIO;
 use Composer\Repository\ComposerRepository;
+use Doctrine\ORM\EntityManager;
 use Nice\Application;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Terramar\Packages\Controller\ContainerAwareController;
+use Terramar\Packages\Entity\Package;
+use Terramar\Packages\Event\PackageUpdateEvent;
+use Terramar\Packages\Events;
+use Terramar\Packages\Helper\ResqueHelper;
 
 class InventoryController extends ContainerAwareController
 {
@@ -79,6 +87,37 @@ class InventoryController extends ContainerAwareController
             'packages' => $packages,
             'package'  => $package,
         ]));
+    }
+
+    public function enqueueBuildAction(Application $app, Request $request, $id)
+    {
+	    $fqn = str_replace('+', '/', $id);
+
+	    /** @var EntityManager $entityManager */
+	    $entityManager = $app->get('doctrine.orm.entity_manager');
+	    /** @var Package $package */
+	    $package = $entityManager->getRepository('Terramar\Packages\Entity\Package')->findOneBy(['fqn' => $fqn]);
+	    if (!$package) {
+		    throw new NotFoundHttpException('Unable to locate Package');
+	    }
+
+	    ResqueHelper::autoConfigure($this->container);
+
+	    $receivedData = json_decode($request->getContent());
+	    $event = new PackageUpdateEvent($package, $receivedData);
+
+	    /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher */
+	    $dispatcher = $app->get('event_dispatcher');
+	    $dispatcher->dispatch(Events::PACKAGE_UPDATE, $event);
+
+	    $flashBag = $request->getSession()->getBag('flashes');
+	    if ($flashBag instanceof FlashBagInterface) {
+		    $flashBag->add('info', "Package $id build enqueued");
+	    }
+
+	    /** @var \Nice\Router\UrlGenerator\SimpleUrlGenerator $routerUrlGenerator */
+		$routerUrlGenerator = $app->get('router.url_generator');
+	    return new RedirectResponse($routerUrlGenerator->generate('packages_view', ['id' => $id]));
     }
 
     /**
