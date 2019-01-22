@@ -11,7 +11,6 @@ namespace Terramar\Packages\Plugin\Satis;
 
 use Composer\Satis\Satis;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Terramar\Packages\Plugin\Actions;
@@ -84,6 +83,9 @@ class Plugin implements PluginInterface, RouterPluginInterface, CompilerAwarePlu
             'packages.plugin.satis.inventory_controller:viewAction');
         $collector->map('/packages/{id}/{version}', 'packages_view_version',
             'packages.plugin.satis.inventory_controller:viewAction');
+
+        $collector->map('/packages/{id}/enqueue_buid', 'enqueue_package_build',
+	        'packages.plugin.satis.inventory_controller:enqueueBuildAction', ['POST']);
     }
 
     /**
