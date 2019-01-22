@@ -10,6 +10,9 @@
         <div class="box box-success">
             <div class="box-header">
                 <h3 class="box-title">Showing all packages</h3>
+                <div class="box-controls">
+                    <a class="btn btn-default" href="{{ path('manage_package_public_new') }}"><i class="fa fa-plus"></i> New public package</a>
+                </div>
             </div>
             <div class="box-body table-responsive">
                 {% if packages|length %}

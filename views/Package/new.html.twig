@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block title 'New public package' %}
+
+{% block alt_title 'Add a public package (not present in your remotes)' %}
+
+{% block content %}
+<form action="{{ path('manage_package_public_create') }}" method="post">
+<div class="row">
+    <div class="col-xs-12 col-sm-6 col-md-3">
+        <div class="box box-warning">
+            <div class="box-header">
+                <h3 class="box-title">Configure Package </h3>
+                <a href="#" id="whats-this-link" class="pull-right btn-link btn whats-this-link">What's this? &nbsp; <i class="fa fa-question-circle"></i></a>
+            </div>
+
+            <div class="box-body">
+                <div class="form-group" id="whats-this-text" style="display: none">
+                    <div class="callout callout-info">
+                        <p>Sometimes you need to use a package publically available on github, but you don't want to mirror it on your Bitbucket/Github Account.</p>
+                        <p>In this case you can direct add the package here!</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" name="name" value="{{ package.name }}" placeholder="Enter name" id="name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea name="description" placeholder="Enter description" id="description" class="form-control">{{ package.description }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="adapter">Adapter</label>
+                    <select id="adapter" name="adapter" class="form-control" disabled>
+                        <option value="">Public package</option>{# todo: insert a correct value#}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="enabled">
+                        <input type="checkbox" name="enabled" value="1" {% if package.enabled %}checked="checked" {% endif %}id="enabled"> &nbsp; Enabled
+                    </label>
+                </div>
+                <h4>Details</h4>
+                {#<div class="form-group">#}
+                    {#<label for="uuid">Fully-qualified Name</label>#}
+                    {#<input type="text" name="uuid" value="{{ uniqid() }}" id="uuid" class="form-control">#}
+                {#</div>#}{# this is equal to fqn #}
+                <div class="form-group">
+                    <label for="fqn">Fully-qualified Name</label>
+                    <input type="text" name="fqn" value="{{ package.fqn }}" id="fqn" class="form-control" placeholder="terramar-labs/packages" required>
+                </div>
+                <div class="form-group">
+                    <label for="webUrl">Repo webUrl</label>
+                    <input type="text" name="webUrl" value="{{ package.webUrl }}" placeholder="https://github.com/terramar-labs/packages.git" id="webUrl" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="webUrl">Repo sshUrl</label>
+                    <input type="text" name="sshUrl" value="{{ package.sshUrl }}" placeholder="git@github.com:terramar-labs/packages.git" id="sshUrl" class="form-control" required>
+                </div>
+
+
+                <div>
+                    <h4>Webhook</h4>
+                    <div>
+                        <p>Webook function disabled on public packages.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="box-footer">
+                <button class="btn btn-primary" type="submit">Create Public Package</button>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-xs-12 col-sm-8 col-md-3 plugin-box"{% if not package.enabled %} style="display: none"{% endif %}>
+        {% for controller in plugin_controllers(constant('Terramar\\Packages\\Plugin\\Actions::PACKAGE_EDIT'), { id: package.id }) %} {# todo: maybe create an action PACKAGE_CREATE?!#}
+        {{ render(controller) }}
+        {% if loop.index % 2 == 0 %}
+    </div>
+    <div class="col-xs-12 col-sm-8 col-md-3 plugin-box"{% if not package.enabled %} style="display: none"{% endif %}>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+</div>
+</form>
+{% endblock %}
+
+
+{% block javascripts %}
+    <script type="text/javascript">
+        $(function() {
+            var $plugins = $('.plugin-box');
+            $(document.getElementById('enabled')).change(function() {
+                if ($(this).is(':checked')) {
+                    $plugins.fadeIn('fast');
+                } else {
+                    $plugins.fadeOut('fast');
+                }
+            });
+            $(document.getElementById('whats-this-link')).on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $(document.getElementById('whats-this-text')).slideDown('fast');
+                $(this).hide();
+            })
+        })
+    </script>
+{% endblock %}
+

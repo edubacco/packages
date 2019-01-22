@@ -50,6 +50,10 @@ class RouteCollector extends BaseCollector
             'Terramar\Packages\Controller\PackageController::updateAction', ['POST']);
         $this->map('/manage/package/{id}/toggle', 'manage_package_toggle',
             'Terramar\Packages\Controller\PackageController::toggleAction');
+	    $this->map('/manage/package/public/create', 'manage_package_public_new',
+		    'Terramar\Packages\Controller\PackagePublicController::newAction');
+	    $this->map('/manage/package/public/create', 'manage_package_public_create',
+		    'Terramar\Packages\Controller\PackagePublicController::createAction', ['POST']);
 
         $this->map('/manage/remotes', 'manage_remotes', 'Terramar\Packages\Controller\RemoteController::indexAction');
         $this->map('/manage/remote/new', 'manage_remote_new',
