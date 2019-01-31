@@ -41,6 +41,13 @@ class PackagesConfiguration implements ConfigurationInterface
                         ->scalarNode('port')->defaultValue('6379')->end()
                         ->scalarNode('database')->defaultNull()->end()
                     ->end()
+                ->end()
+                ->arrayNode('grafana')
+	                ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('host')->defaultNull()->end()
+                        ->scalarNode('bearer_token')->defaultNull()->end()
+	                ->end()
                 ->end();
 
         return $treeBuilder;
