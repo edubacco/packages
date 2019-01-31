@@ -24,6 +24,7 @@ use Terramar\Packages\Plugin\Bitbucket\Plugin as BitbucketPlugin;
 use Terramar\Packages\Plugin\PluginInterface;
 use Terramar\Packages\Plugin\Sami\Plugin as SamiPlugin;
 use Terramar\Packages\Plugin\Satis\Plugin as SatisPlugin;
+use Terramar\Packages\Plugin\GrafanaAnnotations\Plugin as GrafanaAnnotationsPlugin;
 
 class Application extends BaseApplication
 {
@@ -78,6 +79,7 @@ class Application extends BaseApplication
         $this->registerPlugin(new CloneProjectPlugin());
         $this->registerPlugin(new SamiPlugin());
         $this->registerPlugin(new SatisPlugin());
+        $this->registerPlugin(new GrafanaAnnotationsPlugin());
     }
 
     /**

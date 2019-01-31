@@ -54,3 +54,7 @@ packages:
 
     # Redis database index where jobs will be stored.
     database: 4
+
+  grafana:
+    host: 'http://prometheus-operator-grafana.monitoring.svc.cluster.local'
+    bearer_token: 'keyJrIjoibjMyaUZhOFFTZG1ORm9rNUV1d1RTR3NpU2dvQzJsM1QiLCJuIjoidGVycmFtYXItcGFja2FnaXN0IiwiaWQiOjF9'
