@@ -124,6 +124,8 @@ services:
       PACKAGES_USER: user
       PACKAGES_PASSWORD: password
       PACKAGES_PDO_PATH: '%app.root_dir%/database/database.sqlite'
+      PACKAGES_GRAFANA_HOST: https://grafana.grafana
+      PACKAGES_GRAFANA_BEARER: asdfasdf
     volumes:
     - /host/packages/database:/app/database
     - /host/packages/satis:/app/satis
@@ -160,6 +162,11 @@ The following environment variables can optionally be used to configure your ins
 - `PACKAGES_PDO_DBNAME` - database name
 - `PACKAGES_REDIS_HOST` - Redis host
 - `PACKAGES_REDIS_PORT` - Redis port
+
+#### Grafana
+- `PACKAGES_GRAFANA_HOST` - Grafana host
+- `PACKAGES_GRAFANA_BEARER` - Grafana bearer token (with write access)
+
 
 Visit [the documentation](http://docs.terramarlabs.com/packages/3.2/getting-started/docker) to learn more.
 
