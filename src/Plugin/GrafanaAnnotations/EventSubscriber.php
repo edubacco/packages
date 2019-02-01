@@ -63,9 +63,6 @@ class EventSubscriber implements EventSubscriberInterface {
 
 		$package = $event->getPackage();
 
-		$bearer_key = "eyJrIjoibjMyaUZhOFFTZG1ORm9rNUV1d1RTR3NpU2dvQzJsM1QiLCJuIjoidGVycmFtYXItcGFja2FnaXN0IiwiaWQiOjF9";
-		$base_uri = 'http://prometheus-operator-grafana.monitoring.svc.cluster.local';
-
 		$client = new Client([
 			'base_uri' => $this->config['host'],
 			'headers' => [
@@ -77,7 +74,7 @@ class EventSubscriber implements EventSubscriberInterface {
 				RequestOptions::JSON => [
 					"time"        => round(microtime(true) * 1000), #millitime
 					"isRegion"    => false,
-					"tags"        => [ "packagist", "packageUpdate" ],
+					"tags"        => [ "packagist", "packageUpdate", $package->getFqn() ],
 					"text"        => "New commit on package {$package->getFqn()}"
 				]
 			]
