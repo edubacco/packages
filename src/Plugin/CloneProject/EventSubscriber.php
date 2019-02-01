@@ -65,7 +65,7 @@ class EventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->resqueHelper->enqueueOnce('default', 'Terramar\Packages\Plugin\CloneProject\CloneProjectJob',
+        $this->resqueHelper->enqueue('default', 'Terramar\Packages\Plugin\CloneProject\CloneProjectJob',
             ['id' => $event->getPackage()->getId()]);
     }
 
