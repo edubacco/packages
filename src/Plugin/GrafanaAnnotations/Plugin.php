@@ -30,12 +30,16 @@ class Plugin implements PluginInterface {
 	 */
 	public function configure(ContainerBuilder $container)
 	{
+		$grafanaConfig = [
+			'host' => $container->getParameter('packages.grafana.host'),
+			'bearer_token' => $container->getParameter('packages.grafana.bearer_token'),
+		];
 
 		$container->register('packages.plugin.grafana_annotations.subscriber',
 			'Terramar\Packages\Plugin\GrafanaAnnotations\EventSubscriber')
-					->addArgument('%packages.configuration%')
-
+		          ->addArgument($grafanaConfig)
 		          ->addTag('kernel.event_subscriber');
+
 	}
 
 	/**
