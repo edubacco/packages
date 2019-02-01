@@ -83,6 +83,9 @@ class PackagesExtension extends Extension implements CompilerAwareExtensionInter
         $container->setParameter('packages.resque.port', $config['resque']['port']);
         $container->setParameter('packages.resque.database', $config['resque']['database']);
 
+	    $container->setParameter('packages.grafana.host', $config['grafana']['host']);
+	    $container->setParameter('packages.grafana.bearer_token', $config['grafana']['bearer_token']);
+
         $container->register('packages.controller_manager', 'Terramar\Packages\Plugin\ControllerManager');
 
         $container->register('packages.fragment_handler.inline_renderer',

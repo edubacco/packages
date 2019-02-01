@@ -32,11 +32,11 @@ class EventSubscriber implements EventSubscriberInterface {
 	}
 
 	public function isPluginActive() {
-		if (!isset($this->config['grafana']['host']) || empty($this->config['grafana']['host'])) {
+		if (!isset($this->config['host']) || empty($this->config['host'])) {
 			return false;
 		}
 
-		if (!isset($this->config['grafana']['bearer_token']) || empty($this->config['grafana']['bearer_token'])) {
+		if (!isset($this->config['bearer_token']) || empty($this->config['bearer_token'])) {
 			return false;
 		}
 
@@ -67,9 +67,9 @@ class EventSubscriber implements EventSubscriberInterface {
 		$base_uri = 'http://prometheus-operator-grafana.monitoring.svc.cluster.local';
 
 		$client = new Client([
-			'base_uri' => $this->config['grafana']['host'],
+			'base_uri' => $this->config['host'],
 			'headers' => [
-				'Authorization' => "Bearer {$this->config['grafana']['bearer_token']}",
+				'Authorization' => "Bearer {$this->config['bearer_token']}",
 			]
 		]);
 		$response = $client->request('POST', '/api/annotations',
